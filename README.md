@@ -1,3 +1,7 @@
+
+https://github.com/user-attachments/assets/add5ec97-00bb-453e-9202-87ba33584981
+
+
 # Darukaa.Earth 🌍
 
 A full-stack geospatial environmental analytics platform for managing carbon and biodiversity projects, visualizing geographical sites, and understanding environmental performance over time.
