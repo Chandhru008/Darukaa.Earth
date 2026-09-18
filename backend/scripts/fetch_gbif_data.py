@@ -2,7 +2,7 @@ import requests
 from sqlalchemy import create_engine, text
 import math
 
-engine = create_engine('postgresql://postgres:1234@localhost:5433/Darukaa_db')
+engine = create_engine('postgresql://postgres:1234@localhost:5433/Daaruka_db')
 
 def get_bounding_box(lat, lon, distance_km=5):
     # Rough approximation for bounding box

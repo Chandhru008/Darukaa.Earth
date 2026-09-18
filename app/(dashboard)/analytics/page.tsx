@@ -42,7 +42,9 @@ function QBadge({ quality }: { quality?: string }) {
   return <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${cls}`}>{label[quality] || quality}</span>
 }
 
-const API = "http://127.0.0.1:8001"
+import { API_BASE_URL } from "@/lib/api-config"
+
+const API = API_BASE_URL
 
 export default function AnalyticsPage() {
   const { sites } = useDashboard()

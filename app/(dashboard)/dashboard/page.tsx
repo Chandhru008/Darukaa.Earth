@@ -6,6 +6,7 @@ import { useDashboard } from "@/components/dashboard/store"
 import { Card, DemoBadge, KpiCard, PageHeader, SectionHeader, StatusBadge } from "@/components/dashboard/ui"
 import MapView from "@/components/dashboard/map-view"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { API_BASE_URL } from "@/lib/api-config"
 
 /** Animates a number from 0 to `target` over `duration` ms */
 function useCountUp(target: number, duration = 900) {
@@ -69,10 +70,11 @@ export default function DashboardPage() {
     try {
       const token = localStorage.getItem("token")
       if (!token || sites.length === 0) return
+
       // Sum biodiversity observations across every site
       const counts = await Promise.all(
         sites.map(s =>
-          fetch(`http://127.0.0.1:8001/sites/${s.id}/biodiversity`, {
+          fetch(`${API_BASE_URL}/sites/${s.id}/biodiversity`, {
             headers: { Authorization: `Bearer ${token}` }
           })
             .then(r => r.ok ? r.json() : [])
@@ -106,7 +108,7 @@ export default function DashboardPage() {
     if (!confirm("Are you sure you want to delete this project and all its data?")) return
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://127.0.0.1:8001/projects/${projectId}`, {
+      const res = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       })

@@ -23,7 +23,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from datetime import date, timedelta
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Darukaa_db")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Daaruka_db")
 MPC_STAC = "https://planetarycomputer.microsoft.com/api/stac/v1/search"
 
 # Published annual NDVI reference for Karnataka Western Ghats forests

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
 import { useRouter } from "next/navigation"
+import { API_BASE_URL, MAPBOX_TOKEN } from "@/lib/api-config"
 
 type SiteFeatureCollection = {
   type: "FeatureCollection"
@@ -14,7 +15,7 @@ type SiteFeatureCollection = {
   }>
 }
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""
+mapboxgl.accessToken = MAPBOX_TOKEN
 
 export function MapView() {
   const ref = useRef<HTMLDivElement>(null)
@@ -28,7 +29,7 @@ export function MapView() {
       const token = localStorage.getItem("token")
       if (!token) return
       try {
-        const res = await fetch("http://127.0.0.1:8001/sites", {
+        const res = await fetch(`${API_BASE_URL}/sites`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {

@@ -106,7 +106,7 @@ After import, verify with these SQL queries:
 
 ```bash
 # Open psql
-psql -U postgres -p 5433 -d Darukaa_db
+psql "postgresql://postgres:1234@localhost:5433/Daaruka_db"
 ```
 
 ```sql

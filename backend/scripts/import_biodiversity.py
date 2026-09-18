@@ -34,7 +34,7 @@ from sqlalchemy import create_engine, text
 from datetime import date
 from tqdm import tqdm
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Darukaa_db")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Daaruka_db")
 
 # ── bounding box for India + surroundings ─────────────────────────────────────
 # Sites are in Karnataka (~13-15°N, 75-76°E). We use a generous India bbox.

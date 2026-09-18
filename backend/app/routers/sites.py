@@ -15,8 +15,9 @@ import random
 from app.models.site import Site
 from app.models.project import Project
 from app.schemas.site import SiteCreate, SiteResponse
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, get_optional_user
 from app.models.user import User
+from typing import Optional as _Opt
 
 router = APIRouter(tags=["Sites"])
 
@@ -38,7 +39,7 @@ def create_site(site_in: SiteCreate, db: Session = Depends(get_db), current_user
         area_hectares=site_in.area_hectares,
         center_latitude=site_in.center_latitude,
         center_longitude=site_in.center_longitude,
-        geometry=func.ST_GeomFromGeoJSON(geojson_str)
+        geometry=func.ST_SetSRID(func.ST_GeomFromGeoJSON(geojson_str), 4326)
     )
     db.add(db_site)
     db.commit()
@@ -51,23 +52,29 @@ def create_site(site_in: SiteCreate, db: Session = Depends(get_db), current_user
         month_date = base_date + timedelta(days=30 * i)
         metric = EnvironmentalMetric(
             site_id=db_site.id,
-            timestamp=month_date,
-            ndvi_score=random.uniform(0.4, 0.85),
-            forest_cover_percentage=random.uniform(40.0, 95.0),
-            carbon_stock_tonnes=random.uniform(100.0, 500.0) * (site_in.area_hectares or 10.0)
+            recorded_at=month_date,
+            year=month_date.year,
+            ndvi=random.uniform(0.4, 0.85),
+            forest_cover=random.uniform(40.0, 95.0),
+            tree_cover_loss_ha=random.uniform(0.0, 2.0),
+            aboveground_biomass_density=random.uniform(50.0, 150.0),
+            carbon_metric=random.uniform(100.0, 500.0) * (site_in.area_hectares or 10.0),
+            data_source="Mock Demo Data",
+            data_quality="modelled"
         )
         db.add(metric)
         
     # Generate a few mock biodiversity observations
     species_pool = ['Panthera tigris', 'Elephas maximus', 'Macaca mulatta', 'Pavo cristatus', 'Buceros bicornis']
     for _ in range(5):
+        lon = site_in.center_longitude + random.uniform(-0.01, 0.01)
+        lat = site_in.center_latitude + random.uniform(-0.01, 0.01)
         obs = BiodiversityObservation(
             site_id=db_site.id,
             species_name=random.choice(species_pool),
-            observation_date=datetime.utcnow() - timedelta(days=random.randint(1, 30)),
-            latitude=site_in.center_latitude + random.uniform(-0.01, 0.01),
-            longitude=site_in.center_longitude + random.uniform(-0.01, 0.01),
-            confidence_score=random.uniform(0.7, 0.99)
+            observed_at=datetime.utcnow().date() - timedelta(days=random.randint(1, 30)),
+            location=func.ST_SetSRID(func.ST_MakePoint(lon, lat), 4326),
+            abundance=random.uniform(1.0, 10.0)
         )
         db.add(obs)
         
@@ -79,8 +86,8 @@ def create_site(site_in: SiteCreate, db: Session = Depends(get_db), current_user
     return db_site
 
 @router.get("/projects/{project_id}/sites", response_model=List[SiteResponse])
-def get_project_sites(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    project = db.query(Project).filter(Project.id == project_id, Project.created_by == current_user.id).first()
+def get_project_sites(project_id: int, db: Session = Depends(get_db), current_user: _Opt[User] = Depends(get_optional_user)):
+    project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
@@ -105,8 +112,8 @@ def get_project_sites(project_id: int, db: Session = Depends(get_db), current_us
     return result
 
 @router.get("/sites/{site_id}", response_model=SiteResponse)
-def get_site(site_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    res = db.query(Site, func.ST_AsGeoJSON(Site.geometry).label('geojson')).join(Project).filter(Site.id == site_id, Project.created_by == current_user.id).first()
+def get_site(site_id: int, db: Session = Depends(get_db), current_user: _Opt[User] = Depends(get_optional_user)):
+    res = db.query(Site, func.ST_AsGeoJSON(Site.geometry).label('geojson')).filter(Site.id == site_id).first()
     if not res:
         raise HTTPException(status_code=404, detail="Site not found")
     site, geojson_str = res
@@ -125,8 +132,8 @@ def get_site(site_id: int, db: Session = Depends(get_db), current_user: User = D
     }
 
 @router.get("/sites", response_model=List[SiteResponse])
-def get_all_sites(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    sites = db.query(Site, func.ST_AsGeoJSON(Site.geometry).label('geojson')).join(Project).filter(Project.created_by == current_user.id).all()
+def get_all_sites(db: Session = Depends(get_db)):
+    sites = db.query(Site, func.ST_AsGeoJSON(Site.geometry).label('geojson')).all()
     
     result = []
     for site, geojson_str in sites:

@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { API_BASE_URL } from "@/lib/api-config"
 
 export interface UserProfile {
   id: number
@@ -108,7 +109,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8001/auth/me", { headers: getHeaders() })
+      const res = await fetch(`${API_BASE_URL}/auth/me`, { headers: getHeaders() })
       if (res.ok) {
         const data = await res.json()
         setUser(data)
@@ -120,7 +121,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProjects = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8001/projects", { headers: getHeaders() })
+      const res = await fetch(`${API_BASE_URL}/projects`, { headers: getHeaders() })
       if (res.ok) {
         const data = await res.json()
         setProjects(data)
@@ -132,7 +133,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAllSites = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8001/sites", { headers: getHeaders() })
+      const res = await fetch(`${API_BASE_URL}/sites`, { headers: getHeaders() })
       if (res.ok) {
         const data = await res.json()
         setSites(data)
@@ -144,7 +145,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const refreshStats = useCallback(async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8001/stats", { headers: getHeaders() })
+      const res = await fetch(`${API_BASE_URL}/stats`, { headers: getHeaders() })
       if (res.ok) {
         const data = await res.json()
         setStats(data)
@@ -156,7 +157,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSites = useCallback(async (projectId: number) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8001/projects/${projectId}/sites`, { headers: getHeaders() })
+      const res = await fetch(`${API_BASE_URL}/projects/${projectId}/sites`, { headers: getHeaders() })
       if (res.ok) {
         const data = await res.json()
         setSites(prev => {
@@ -202,7 +203,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       throw new Error(e?.message || "Authentication required. Please log in.")
     }
 
-    const res = await fetch("http://127.0.0.1:8001/projects", {
+    const res = await fetch(`${API_BASE_URL}/projects`, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -244,7 +245,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       throw new Error(e?.message || "Authentication required. Please log in.")
     }
 
-    const res = await fetch("http://127.0.0.1:8001/sites", {
+    const res = await fetch(`${API_BASE_URL}/sites`, {
       method: "POST",
       headers,
       body: JSON.stringify({

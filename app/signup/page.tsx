@@ -5,6 +5,7 @@ import { AuthField } from '@/components/auth/auth-field'
 import Link from 'next/link'
 import { ArrowRight, Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
+import { API_BASE_URL } from '@/lib/api-config'
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -21,7 +22,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://127.0.0.1:8001/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

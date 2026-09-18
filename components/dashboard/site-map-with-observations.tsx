@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
+import { MAPBOX_TOKEN } from "@/lib/api-config"
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""
+mapboxgl.accessToken = MAPBOX_TOKEN
 
 interface ObservationPoint {
   id: number

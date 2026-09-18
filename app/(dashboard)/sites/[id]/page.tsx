@@ -77,7 +77,9 @@ function QualityBadge({ quality }: { quality?: string }) {
   )
 }
 
-const API = "http://127.0.0.1:8001"
+import { API_BASE_URL } from "@/lib/api-config"
+
+const API = API_BASE_URL
 
 export default function SiteDetailPage() {
   const { id } = useParams<{ id: string }>()

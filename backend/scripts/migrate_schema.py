@@ -17,7 +17,7 @@ load_dotenv()
 
 from sqlalchemy import create_engine, text
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Darukaa_db")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:1234@localhost:5433/Daaruka_db")
 engine = create_engine(DATABASE_URL)
 
 MIGRATIONS = [

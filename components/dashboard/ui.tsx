@@ -96,7 +96,7 @@ export function Card({ className = "", children }: { className?: string; childre
   return <div className={`rounded-2xl border border-border/80 bg-card/90 shadow-[0_18px_55px_-32px_rgba(0,0,0,0.9)] transition-colors duration-300 ${className}`}>{children}</div>
 }
 
-export function MetricStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+export function MetricStat({ label, value, hint }: { label: string; value: string; hint?: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-background/40 p-4">
       <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{label}</div>

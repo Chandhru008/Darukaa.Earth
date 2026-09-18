@@ -13,8 +13,9 @@ from app.schemas.analytics import (
     EnvironmentalMetricCreate, EnvironmentalMetricResponse,
     EnvironmentalHistoryItem
 )
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, get_optional_user
 from app.models.user import User
+from typing import Optional as _Opt
 
 router = APIRouter(tags=["Analytics"])
 
@@ -48,11 +49,9 @@ def get_site_analytics(
     year_from: Optional[int] = Query(None),
     year_to: Optional[int] = Query(None),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
@@ -69,15 +68,13 @@ def get_site_analytics(
 def get_site_analytics_history(
     site_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
     """
     Returns yearly aggregated analytics for a site.
     Only includes years where actual data exists — never fabricates values.
     """
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
@@ -116,15 +113,13 @@ def get_site_analytics_history(
 def get_site_summary(
     site_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
     """
     Combined endpoint: site info + latest metrics + biodiversity counts.
     Used by the site detail page for a single efficient API call.
     """
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
@@ -190,11 +185,16 @@ def get_site_summary(
 
 
 @router.get("/stats")
-def get_dashboard_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """Aggregate dashboard KPIs for the authenticated user."""
-    user_project_ids = [
-        pid for (pid,) in db.query(Project.id).filter(Project.created_by == current_user.id).all()
-    ]
+def get_dashboard_stats(db: Session = Depends(get_db), current_user: _Opt[User] = Depends(get_optional_user)):
+    """Aggregate dashboard KPIs — scoped to user if authenticated, otherwise all projects."""
+    if current_user:
+        user_project_ids = [
+            pid for (pid,) in db.query(Project.id).filter(Project.created_by == current_user.id).all()
+        ]
+    else:
+        user_project_ids = [
+            pid for (pid,) in db.query(Project.id).all()
+        ]
     total_projects = len(user_project_ids)
 
     active_sites = (

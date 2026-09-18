@@ -27,6 +27,8 @@ interface AnalyticsItem {
   recorded_at: string
 }
 
+import { API_BASE_URL } from "@/lib/api-config"
+
 export default function CarbonPage() {
   const { sites } = useDashboard()
   const [selectedSiteId, setSelectedSiteId] = useState<number | null>(null)
@@ -36,7 +38,7 @@ export default function CarbonPage() {
   }, [sites, selectedSiteId])
 
   const apiUrl = selectedSiteId
-    ? `http://127.0.0.1:8001/sites/${selectedSiteId}/analytics`
+    ? `${API_BASE_URL}/sites/${selectedSiteId}/analytics`
     : null
 
   const { data: metrics, isLoading, isRefreshing, lastUpdated, refresh } =

@@ -11,8 +11,9 @@ from app.schemas.biodiversity import (
     BiodiversityObservationCreate, BiodiversityObservationResponse,
     BiodiversityHistoryItem
 )
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, get_optional_user
 from app.models.user import User
+from typing import Optional as _Opt
 
 router = APIRouter(tags=["Biodiversity"])
 
@@ -42,7 +43,7 @@ def create_biodiversity(
         biomass=obs_in.biomass,
         source=obs_in.source,
         external_id=obs_in.external_id,
-        location=func.ST_GeomFromGeoJSON(geojson_str)
+        location=func.ST_SetSRID(func.ST_GeomFromGeoJSON(geojson_str), 4326)
     )
     db.add(db_obs)
     db.commit()
@@ -58,15 +59,13 @@ def get_site_biodiversity(
     limit: int = Query(200, le=1000),
     offset: int = Query(0),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
     """
     Returns biodiversity observations spatially within the site polygon.
     Uses ST_Within to ensure only observations inside the polygon are returned.
     """
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
@@ -125,15 +124,13 @@ def get_site_biodiversity(
 def get_site_biodiversity_history(
     site_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
     """
     Returns yearly aggregated biodiversity statistics.
     Only includes years where actual data exists — never fabricates.
     """
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
@@ -166,12 +163,10 @@ def get_site_biodiversity_history(
 def get_site_species_list(
     site_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: _Opt[User] = Depends(get_optional_user)
 ):
     """Returns distinct species observed at the site with their statistics."""
-    site = db.query(Site).join(Project).filter(
-        Site.id == site_id, Project.created_by == current_user.id
-    ).first()
+    site = db.query(Site).filter(Site.id == site_id).first()
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 

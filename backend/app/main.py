@@ -23,6 +23,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
+import os
+
 # Configure CORS
 origins = [
     "http://localhost",
@@ -32,10 +34,17 @@ origins = [
     "http://127.0.0.1:3001",
 ]
 
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    for url in frontend_url.split(","):
+        cleaned_url = url.strip().rstrip("/")
+        if cleaned_url and cleaned_url not in origins:
+            origins.append(cleaned_url)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origin_regex=r"https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -13,10 +13,12 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
-# Python
+# Python & Build Cache
 __pycache__/
 *.py[cod]
 *.class
+*.tsbuildinfo
+
 
 # Environments
 .env

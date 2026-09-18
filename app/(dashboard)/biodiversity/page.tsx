@@ -28,7 +28,9 @@ interface HistoryRow {
   avg_abundance?: number; avg_biomass?: number
 }
 
-const API = "http://127.0.0.1:8001"
+import { API_BASE_URL } from "@/lib/api-config"
+
+const API = API_BASE_URL
 
 export default function BiodiversityPage() {
   const { sites } = useDashboard()
