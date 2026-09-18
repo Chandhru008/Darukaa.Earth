@@ -1,0 +1,89 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-manrope), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Deep charcoal / almost black */
+  --background: oklch(0.17 0.006 155);
+  /* Warm off-white */
+  --foreground: oklch(0.94 0.008 95);
+
+  /* Very dark charcoal cards */
+  --card: oklch(0.21 0.007 155);
+  --card-foreground: oklch(0.94 0.008 95);
+  --popover: oklch(0.2 0.007 155);
+  --popover-foreground: oklch(0.94 0.008 95);
+
+  /* Natural forest green accent */
+  --primary: oklch(0.62 0.115 150);
+  --primary-foreground: oklch(0.16 0.01 155);
+
+  /* Muted olive / earth green secondary */
+  --secondary: oklch(0.55 0.06 120);
+  --secondary-foreground: oklch(0.96 0.01 95);
+
+  --muted: oklch(0.26 0.006 155);
+  /* Muted gray secondary text */
+  --muted-foreground: oklch(0.68 0.008 130);
+
+  --accent: oklch(0.62 0.115 150);
+  --accent-foreground: oklch(0.16 0.01 155);
+
+  --destructive: oklch(0.62 0.2 25);
+
+  --border: oklch(0.98 0.01 150 / 9%);
+  --input: oklch(0.98 0.01 150 / 12%);
+  --ring: oklch(0.62 0.115 150);
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/40;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'ss01', 'cv01';
+  }
+  ::selection {
+    background: oklch(0.62 0.115 150 / 30%);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}

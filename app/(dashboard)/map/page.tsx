@@ -1,0 +1,5 @@
+"use client"
+import { Search, RotateCcw } from "lucide-react"
+import { Card, DemoBadge, PageHeader } from "@/components/dashboard/ui"
+import MapView from "@/components/dashboard/map-view"
+export default function MapPage(){return <div className="space-y-6"><PageHeader title="Project Map" subtitle="Explore environmental projects and their geographical boundaries."><DemoBadge/></PageHeader><div className="flex flex-wrap gap-2"><div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2"><Search className="size-4 text-muted-foreground"/><input className="w-44 bg-transparent text-sm outline-none" placeholder="Search sites..."/></div>{["All Projects","All Regions","All Status"].map(x=><button key={x} className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-muted-foreground">{x}</button>)}<button className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"><RotateCcw className="size-4"/> Reset</button></div><Card className="p-3"><MapView/></Card></div>}
