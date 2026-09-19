@@ -1,5 +1,10 @@
 
-https://github.com/user-attachments/assets/add5ec97-00bb-453e-9202-87ba33584981
+https://github.com/user-attachments/assets/f511bb83-1f78-481d-91b5-0d2dbaeb13b6
+
+
+
+
+
 
 
 # Darukaa.Earth 🌍
